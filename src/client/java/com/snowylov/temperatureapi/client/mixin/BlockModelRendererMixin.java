@@ -51,7 +51,12 @@ abstract class BlockModelRendererMixin {
         int temperature = ClientTemperatureCache.get(pos);
         BlockRenderView view = TEMPERATURE_API_WORLD.get();
         if (temperature == TemperatureScale.STANDARD && view != null) {
-            temperature = TemperatureScale.biomeAirTemperature(view.getBiome(pos).value().getTemperature());
+            int encoded = view.getColor(pos, (biome, x, z) -> {
+                int value = Math.max(0, Math.min(255, Math.round(biome.getTemperature() * 127.5F)));
+                return 0xFF000000 | (value << 16) | (value << 8) | value;
+            });
+            float blendedBiomeTemperature = ((encoded >> 16) & 0xFF) / 127.5F;
+            temperature = TemperatureScale.biomeAirTemperature(blendedBiomeTemperature);
         }
         TemperatureScale.Tint tint = TemperatureScale.blockTint(temperature);
         if (tint.strength() <= 0.0F) return;
