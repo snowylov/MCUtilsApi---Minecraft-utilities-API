@@ -45,7 +45,7 @@ public final class TemperatureApi implements ModInitializer {
     }
 
     public static int getAirTemperature(World world, BlockPos pos) {
-        int temperature = Math.round(100.0F + (world.getBiome(pos).value().getTemperature() - 0.8F) * 25.0F);
+        int temperature = TemperatureScale.biomeAirTemperature(world.getBiome(pos).value().getTemperature());
         for (AirTemperatureProvider provider : TemperatureRegistries.airProviders()) {
             Integer replacement = provider.getTemperature(world, pos, temperature);
             if (replacement != null) temperature = replacement;
