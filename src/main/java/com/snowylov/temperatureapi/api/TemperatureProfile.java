@@ -19,7 +19,7 @@ public record TemperatureProfile(
         return new TemperatureProfile(TemperatureScale.STANDARD, 1.0F, 0.5F, 0.5F, false, false);
     }
 
-    public static TemperatureProfile metal() {
+    public static TemperatureProfile metalProfile() {
         return new TemperatureProfile(TemperatureScale.STANDARD, 4.0F, 0.9F, 0.35F, true, true);
     }
 
