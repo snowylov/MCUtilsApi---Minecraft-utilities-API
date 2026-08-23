@@ -21,6 +21,7 @@ import java.util.List;
 @Mixin(BlockModelRenderer.class)
 abstract class BlockModelRendererMixin {
     private static final ThreadLocal<BlockPos> TEMPERATURE_API_POS = new ThreadLocal<>();
+    private static final ThreadLocal<BlockRenderView> TEMPERATURE_API_WORLD = new ThreadLocal<>();
 
     @Inject(method = "render", at = @At("HEAD"))
     private void temperatureApi$capturePosition(BlockRenderView world, List<BlockModelPart> parts,
@@ -28,6 +29,7 @@ abstract class BlockModelRendererMixin {
                                                  VertexConsumer consumer, boolean cull, int overlay,
                                                  CallbackInfo ci) {
         TEMPERATURE_API_POS.set(pos);
+        TEMPERATURE_API_WORLD.set(world);
     }
 
     @Inject(method = "render", at = @At("RETURN"))
@@ -36,6 +38,7 @@ abstract class BlockModelRendererMixin {
                                                VertexConsumer consumer, boolean cull, int overlay,
                                                CallbackInfo ci) {
         TEMPERATURE_API_POS.remove();
+        TEMPERATURE_API_WORLD.remove();
     }
 
     @ModifyArgs(
@@ -45,7 +48,12 @@ abstract class BlockModelRendererMixin {
     private void temperatureApi$applyTint(Args args) {
         BlockPos pos = TEMPERATURE_API_POS.get();
         if (pos == null) return;
-        TemperatureScale.Tint tint = TemperatureScale.metalTint(ClientTemperatureCache.get(pos));
+        int temperature = ClientTemperatureCache.get(pos);
+        BlockRenderView view = TEMPERATURE_API_WORLD.get();
+        if (temperature == TemperatureScale.STANDARD && view != null) {
+            temperature = TemperatureScale.biomeAirTemperature(view.getBiome(pos).value().getTemperature());
+        }
+        TemperatureScale.Tint tint = TemperatureScale.blockTint(temperature);
         if (tint.strength() <= 0.0F) return;
         float red = ((tint.rgb() >> 16) & 0xFF) / 255.0F;
         float green = ((tint.rgb() >> 8) & 0xFF) / 255.0F;
