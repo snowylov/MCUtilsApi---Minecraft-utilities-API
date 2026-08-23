@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_block",
+    "minecraft:raw_iron_block",
+    "minecraft:gold_block",
+    "minecraft:raw_gold_block",
+    "minecraft:copper_block",
+    "minecraft:raw_copper_block",
+    "minecraft:exposed_copper",
+    "minecraft:weathered_copper",
+    "minecraft:oxidized_copper",
+    "minecraft:cut_copper",
+    "minecraft:exposed_cut_copper",
+    "minecraft:weathered_cut_copper",
+    "minecraft:oxidized_cut_copper",
+    "minecraft:netherite_block"
+  ]
+}
