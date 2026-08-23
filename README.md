@@ -112,6 +112,8 @@ TemperatureApi.setItemTemperature(stack, 450);
 
 Add custom metals to `#temperature_api:metal`. Metal touching fire, a lit/any campfire, or lava becomes fully orange after 30 seconds. After that it progressively changes to red. The tint overlay is capped at 30%.
 
+Cold blocks and ordinary model-based items blend toward light blue (`#A8D8FF`). Temperature 80, used as the ordinary snowy-biome point, applies an 8% blend. The blend rises smoothly to a hard 40% cap at temperature 0 or colder. If a block or item has no explicit stored temperature, its client rendering uses the local ambient air temperature; explicit temperatures always win.
+
 ## Block texture/model predicate
 
 Extend `TemperatureStateBlock`. Its `temperature_stage` property is synchronized like an ordinary block state:
