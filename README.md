@@ -1,19 +1,11 @@
-# MCUtilsApi---Minecraft-utilities-API
-made by alex.
-feel free to give me credit or just copy the src into your mod
-
-The Fabric 1.21.11 Temperature API is now built directly from this repository. Its full API, model predicate, and integration documentation follows.
-
----
-
-# Temperature API for Fabric 1.21.11
+# MCUtilsApi---Minecraft-utilities-API\nmade by alex.\nfeel free to give me credit or just copy the src into your mod\n\nThe Fabric 1.21.11 Temperature API is now built directly from this repository. Its full API, model predicate, and integration documentation follows.\n\n---\n\n# Temperature API for Fabric 1.21.11
 
 Temperature API supplies sparse, persistent temperatures for blocks, fluids, air, and items. The standard temperature is `100`; that value is omitted from world saves, item components, and client caches.
 
 ## API examples
 
 ```java
-TemperatureRegistries.registerBlock(MyBlocks.STEEL_BLOCK, TemperatureProfile.metal());
+TemperatureRegistries.registerBlock(MyBlocks.STEEL_BLOCK, TemperatureProfile.metalProfile());
 TemperatureRegistries.registerFluid(MyFluids.OIL,
         new TemperatureProfile(90, 2.0F, 0.25F, 0.7F, false, false));
 TemperatureRegistries.registerAirProvider((world, pos, current) ->
