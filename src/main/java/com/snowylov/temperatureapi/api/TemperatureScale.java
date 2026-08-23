@@ -8,6 +8,9 @@ public final class TemperatureScale {
     public static final int ORANGE_AFTER_TICKS = 20 * 30;
     public static final int RED_AFTER_TICKS = 20 * 60;
     public static final float MAX_METAL_TINT = 0.30F;
+    public static final int COLD_TINT_RGB = 0xA8D8FF;
+    public static final float SNOWY_COLD_TINT = 0.08F;
+    public static final float MAX_COLD_TINT = 0.40F;
 
     private TemperatureScale() {
     }
@@ -41,6 +44,30 @@ public final class TemperatureScale {
                 (temperature - ORANGE_TEMPERATURE) / (float) (RED_TEMPERATURE - ORANGE_TEMPERATURE));
         int green = Math.round(0x79 * (1.0F - progress));
         return new Tint(0xFF0000 | (green << 8), MAX_METAL_TINT);
+    }
+
+    /**
+     * Light-blue cold tint. Temperature 80 is the ordinary snowy-biome point (8%),
+     * while temperature 0 and colder use the 40% cap.
+     */
+    public static Tint coldTint(int temperature) {
+        if (temperature >= STANDARD) return new Tint(COLD_TINT_RGB, 0.0F);
+        if (temperature >= 80) {
+            float progress = (STANDARD - temperature) / 20.0F;
+            return new Tint(COLD_TINT_RGB, SNOWY_COLD_TINT * progress);
+        }
+        float extremeProgress = Math.min(1.0F, (80 - temperature) / 80.0F);
+        float strength = SNOWY_COLD_TINT + (MAX_COLD_TINT - SNOWY_COLD_TINT) * extremeProgress;
+        return new Tint(COLD_TINT_RGB, strength);
+    }
+
+    public static int biomeAirTemperature(float biomeTemperature) {
+        return Math.round(STANDARD + (biomeTemperature - 0.8F) * 25.0F);
+    }
+
+    /** Cold blue below 100; existing orange/red behavior above 100. */
+    public static Tint blockTint(int temperature) {
+        return temperature < STANDARD ? coldTint(temperature) : metalTint(temperature);
     }
 
     public record Tint(int rgb, float strength) {
