@@ -1,0 +1,82 @@
+plugins {
+    id 'fabric-loom' version '1.13-SNAPSHOT'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+loom {
+    splitEnvironmentSourceSets()
+    mods {
+        temperature_api {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
+    }
+}
+
+java {
+    withSourcesJar()
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('devJar', Jar) {
+    archiveClassifier = 'dev'
+    from sourceSets.main.output
+    from sourceSets.client.output
+}
+
+tasks.register('sourceZip', Zip) {
+    archiveClassifier = 'src'
+    from('src') { into 'src' }
+    from('build.gradle', 'gradle.properties', 'settings.gradle', 'README.md', 'LICENSE')
+}
+
+tasks.register('packageArtifacts') {
+    dependsOn tasks.remapJar, tasks.devJar, tasks.sourceZip
+}
+
+build.dependsOn tasks.devJar, tasks.sourceZip
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(remapJar)
+            artifact(sourcesJar)
+        }
+    }
+}
