@@ -2,6 +2,12 @@
   "required": true,
   "package": "com.snowylov.temperatureapi.client.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["BlockModelRendererMixin"],
+  "client": [
+    "BlockModelRendererMixin",
+    "ItemLayerRenderStateAccessor",
+    "ItemModelManagerMixin",
+    "ItemRendererMixin",
+    "ItemRenderStateAccessor"
+  ],
   "injectors": {"defaultRequire": 1}
 }
